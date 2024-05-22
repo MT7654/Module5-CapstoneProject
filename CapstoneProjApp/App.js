@@ -7,6 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 function InfoScreen() {
   return <Info />;
+
 }
 function ScanScreen({ navigation }) {
   return <Scan />;
