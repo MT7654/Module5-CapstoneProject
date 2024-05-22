@@ -7,7 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Camera } from "expo-camera";
 import { useState, useEffect } from "react";
 
-const API_KEY = "AIzaSyB7yOQ7LzxYMtFFhNJyCI1d9Tomox0AUNk";
+const API_KEY = "API KEY";
 
 const checkUrlSafety = async (url, navigation) => {
   console.log(`Checking safety for URL: ${url}`);
