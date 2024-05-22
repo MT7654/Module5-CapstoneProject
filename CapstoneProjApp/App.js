@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Button, View, Text, StyleSheet, TextInput, Alert, Image, ScrollView } from "react-native";
+import {
+  Button,
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Alert,
+  Image,
+  ScrollView,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import axios from "axios";
 import { Camera } from "expo-camera";
-import { useState, useEffect } from "react";
 
 const API_KEY = "API KEY";
 
@@ -115,15 +123,13 @@ function HomeScreen({ navigation }) {
   );
 }
 
-function InfoScreen() {
+function InfoScreen({ route }) {
   const [result, setResult] = useState(null);
+  const { url, safe } = route.params;
 
-  // set url as https://github.com/ for test for now
   const callApi = async () => {
     try {
-      const response = await axios.get(
-        "http://10.0.2.2:3000/url?ogUrl=https://github.com/"
-      );
+      const response = await axios.get("http://10.0.2.2:3000/url?ogUrl=" + url);
       setResult(response.data.result);
       // console.log(result);
     } catch (error) {
@@ -132,8 +138,10 @@ function InfoScreen() {
   };
 
   useEffect(() => {
-    callApi();
-  }, []);
+    if (url) {
+      callApi();
+    }
+  }, [url]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -151,19 +159,7 @@ function InfoScreen() {
         <Text style={styles.text}>{result.ogDescription}</Text>
       )}
     </ScrollView>
-// function InfoScreen({ route }) {
-//   const { url, safe } = route.params || {};
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.text}>Info Page</Text>
-//       {url && <Text style={styles.url}>{url}</Text>}
-//       {safe !== undefined && (
-//         <Text style={[styles.status, { color: safe ? "green" : "red" }]}>
-//           {safe ? "The URL is safe." : "The URL is unsafe."}
-//         </Text>
-//       )}
-//     </View>
+  );
 }
 
 const HomeStack = createNativeStackNavigator();
