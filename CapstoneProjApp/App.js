@@ -125,24 +125,41 @@ function HomeScreen({ navigation }) {
 
 function InfoScreen({ route }) {
   const [result, setResult] = useState(null);
-  const { url, safe } = route.params;
 
-  const callApi = async () => {
-    try {
-      const response = await axios.get("http://10.0.2.2:3000/url?ogUrl=" + url);
-      setResult(response.data.result);
-      // console.log(result);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
+  // Add conditional check for url existence
   useEffect(() => {
-    if (url) {
-      callApi();
+    // Add conditional check for url existence
+    if (!route.params) {
+      return;
     }
-  }, [url]);
 
+    const { url, safe } = route.params;
+
+    const callApi = async () => {
+      try {
+        const response = await axios.get(
+          "http://10.0.2.2:3000/url?ogUrl=" + url
+        );
+        setResult(response.data.result);
+        // console.log(result);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    callApi();
+  }, [route.params]);
+
+  // Render null if no params exist
+  if (!route.params) {
+    return (
+      <View style={styles.container}>
+        <Text>No info to load</Text>
+      </View>
+    );
+  }
+
+  // Render UI using the result
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Open Graph Data</Text>
@@ -169,7 +186,8 @@ function HomeStackScreen() {
     <HomeStack.Navigator>
       <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="Scan" component={ScanScreen} />
-      <HomeStack.Screen name="Info" component={InfoScreen} />
+      {/* disable for now */}
+      {/* <HomeStack.Screen name="Info" component={InfoScreen} /> */}
     </HomeStack.Navigator>
   );
 }
@@ -198,6 +216,7 @@ export default function App() {
       >
         <Tab.Screen name="HomeStack" component={HomeStackScreen} />
         <Tab.Screen name="Info" component={InfoScreen} />
+        {/* {url && <Tab.Screen name="Info" component={InfoScreen} />} */}
       </Tab.Navigator>
     </NavigationContainer>
   );
