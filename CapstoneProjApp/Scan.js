@@ -1,10 +1,12 @@
 import { Button, View, Text, StyleSheet } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 import React, { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Scan() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -18,7 +20,9 @@ export default function Scan() {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    checkUrlSafety(data, navigation);
+    // checkUrlSafety(data, navigation);
+    navigation.navigate("Info", { data });
+    console.log("in scan" + data);
   };
 
   if (hasPermission === null) {
@@ -30,8 +34,11 @@ export default function Scan() {
   return (
     <View style={styles.container}>
       <CameraView
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr", "pdf417", "code128"],
+        }}
       />
       {scanned && (
         <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />

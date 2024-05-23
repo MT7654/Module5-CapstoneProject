@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -11,17 +11,34 @@ import {
 import searchIcon from "./assets/majesticons--search-line.png";
 import axios from "axios";
 
-export default function Info() {
-  const [result, setResult] = useState(null);
+export default function Info({ route }) {
   const [url, setUrl] = useState("");
+  const [result, setResult] = useState(null);
+  console.log(route?.params?.data);
+
+  // Effect to update the url state when route.params.url changes
+  useEffect(() => {
+    if (route?.params?.data) {
+      console.log("Received URL:", route.params.data);
+      setUrl(route.params.data); // Update the url state with the new scanned URL
+      console.log(url);
+    }
+  }, [route?.params?.data, url]);
+
+  useEffect(() => {
+    if (url) {
+      handleSubmit(); // Automatically fetch data if a URL was scanned
+    }
+  }, [url]);
 
   const handleSubmit = async () => {
     if (url.trim()) {
       try {
         const response = await axios.get(
-          "http://10.0.2.2:3000/url?ogUrl=" + url
+          "http://192.168.50.117:3000/url?ogUrl=" + url
         );
         setResult(response.data.result);
+        setUrl("");
         // console.log(result);
       } catch (error) {
         console.error("Error fetching data:", error);

@@ -5,31 +5,31 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-function InfoScreen() {
-  return <Info />;
-}
-function ScanScreen({ navigation }) {
-  return <Scan />;
-}
+// function InfoScreen() {
+//   return <Info />;
+// }
+// function ScanScreen({ navigation }) {
+//   return <Scan />;
+// }
 
-function HomeScreen() {
-  return (
-    <Home />
-    // <View style={styles.container}>
-    //   <TextInput
-    //     style={styles.input}
-    //     placeholder="Input link"
-    //     onChangeText={setUrl}
-    //     value={url}
-    //   />
-    //   <Button title="Submit" onPress={handleSubmit} />
-    //   <Button
-    //     title="Start Scanning"
-    //     onPress={() => navigation.navigate("Scan")}
-    //   />
-    // </View>
-  );
-}
+// function HomeScreen() {
+//   return (
+//     <Home />
+//     // <View style={styles.container}>
+//     //   <TextInput
+//     //     style={styles.input}
+//     //     placeholder="Input link"
+//     //     onChangeText={setUrl}
+//     //     value={url}
+//     //   />
+//     //   <Button title="Submit" onPress={handleSubmit} />
+//     //   <Button
+//     //     title="Start Scanning"
+//     //     onPress={() => navigation.navigate("Scan")}
+//     //   />
+//     // </View>
+//   );
+// }
 
 const Tab = createBottomTabNavigator();
 
@@ -56,9 +56,9 @@ export default function App() {
           tabBarInactiveTintColor: "black",
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Scan" component={ScanScreen} />
-        <Tab.Screen name="Info" component={InfoScreen} />
+        <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="Scan" component={Scan} />
+        <Tab.Screen name="Info" component={Info} />
       </Tab.Navigator>
     </NavigationContainer>
   );
