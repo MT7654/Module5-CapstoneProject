@@ -126,13 +126,7 @@ function HomeScreen({ navigation }) {
 function InfoScreen({ route }) {
   const [result, setResult] = useState(null);
 
-  // Add conditional check for url existence
   useEffect(() => {
-    // Add conditional check for url existence
-    if (!route.params) {
-      return;
-    }
-
     const { url, safe } = route.params;
 
     const callApi = async () => {
