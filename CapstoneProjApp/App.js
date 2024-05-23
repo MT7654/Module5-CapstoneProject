@@ -7,7 +7,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 function InfoScreen() {
   return <Info />;
-
 }
 function ScanScreen({ navigation }) {
   return <Scan />;
@@ -60,7 +59,6 @@ export default function App() {
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Scan" component={ScanScreen} />
         <Tab.Screen name="Info" component={InfoScreen} />
-        {/* {url && <Tab.Screen name="Info" component={InfoScreen} />} */}
       </Tab.Navigator>
     </NavigationContainer>
   );

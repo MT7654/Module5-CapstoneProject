@@ -1,8 +1,36 @@
-import React from "react";
-import { SafeAreaView, View, ScrollView, Text, Image } from "react-native";
+import React, { useState } from "react";
+import {
+  SafeAreaView,
+  View,
+  ScrollView,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import searchIcon from "./assets/majesticons--search-line.png";
+import axios from "axios";
 
 export default function Info() {
+  const [result, setResult] = useState(null);
+  const [url, setUrl] = useState("");
+
+  const handleSubmit = async () => {
+    if (url.trim()) {
+      try {
+        const response = await axios.get(
+          "http://10.0.2.2:3000/url?ogUrl=" + url
+        );
+        setResult(response.data.result);
+        // console.log(result);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    } else {
+      Alert.alert("Error", "Please enter a valid URL.");
+    }
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -27,7 +55,7 @@ export default function Info() {
             marginBottom: 3,
           }}
         >
-          {"Website Information"}
+          {result && result.ogSiteName && "Website Name: " + result.ogSiteName}
         </Text>
         <Text
           style={{
@@ -36,7 +64,7 @@ export default function Info() {
             marginBottom: 15,
           }}
         >
-          {"Insights on the website"}
+          {result && result.ogTitle && "Website Title: " + result.ogTitle}
         </Text>
         <View
           style={{
@@ -51,23 +79,26 @@ export default function Info() {
             marginBottom: 16,
           }}
         >
-          <Text
+          <TextInput
             style={{
               color: "#828282",
               fontSize: 14,
               marginRight: 4,
               flex: 1,
             }}
-          >
-            {"Input URL link"}
-          </Text>
-          <Image
-            source={searchIcon}
-            style={{
-              width: 20,
-              height: 20,
-            }}
+            placeholder="Enter URL"
+            onChangeText={(text) => setUrl(text)}
+            value={url}
           />
+          <TouchableOpacity onPress={handleSubmit}>
+            <Image
+              source={searchIcon}
+              style={{
+                width: 20,
+                height: 20,
+              }}
+            />
+          </TouchableOpacity>
         </View>
         <View
           style={{
@@ -94,8 +125,21 @@ export default function Info() {
               marginBottom: 16,
             }}
           >
-            {"Result Summary"}
+            {result &&
+              result.ogDescription &&
+              "Website Description: " + result.ogDescription}
           </Text>
+          {result && result.ogImage && (
+            <Image
+              source={{ uri: result.ogImage[0].url }}
+              style={{
+                width: "100%",
+                height: 80,
+                resizeMode: "contain",
+                marginVertical: 10,
+              }}
+            />
+          )}
           <Text
             style={{
               color: "#000000",
@@ -111,7 +155,7 @@ export default function Info() {
               fontSize: 14,
             }}
           >
-            {"URL: https://www.facebook.com"}
+            {result && result.ogUrl && "URL: " + result.ogUrl}
           </Text>
         </View>
         <View
