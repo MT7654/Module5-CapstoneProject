@@ -7,22 +7,42 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import searchIcon from "./assets/majesticons--search-line.png";
 import axios from "axios";
+import { checkSafeBrowsing } from "./safeBrowsing";
 
 export default function Info() {
   const [result, setResult] = useState(null);
   const [url, setUrl] = useState("");
+  const [status, setStatus] = useState("");
 
   const handleSubmit = async () => {
     if (url.trim()) {
       try {
+        // Fetch URL details from your backend
         const response = await axios.get(
-          "http://10.0.2.2:3000/url?ogUrl=" + url
+          `http://10.0.2.2:3000/url?ogUrl=${url}`
         );
-        setResult(response.data.result);
-        // console.log(result);
+        const urlDetails = response.data.result;
+        setResult(urlDetails);
+
+        // Check the URL against Google's Safe Browsing API
+        const safeBrowsingResult = await checkSafeBrowsing(url);
+        if (safeBrowsingResult && safeBrowsingResult.matches) {
+          setStatus("Danger");
+          Alert.alert(
+            "Warning",
+            "The URL is considered unsafe by Google Safe Browsing."
+          );
+        } else {
+          setStatus("Safe");
+          Alert.alert(
+            "Safe",
+            "The URL is safe according to Google Safe Browsing."
+          );
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -32,12 +52,7 @@ export default function Info() {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: "#FFFFFF",
-      }}
-    >
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <ScrollView
         style={{
           flex: 1,
@@ -147,7 +162,7 @@ export default function Info() {
               marginBottom: 16,
             }}
           >
-            {"Status: 'Safe', 'Warning', or 'Danger'"}
+            {"Status: " + status}
           </Text>
           <Text
             style={{
