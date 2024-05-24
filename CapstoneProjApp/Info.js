@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import UrlContext from "./context/UrlContext";
 import {
   SafeAreaView,
   View,
@@ -7,45 +8,26 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Alert,
 } from "react-native";
 import searchIcon from "./assets/majesticons--search-line.png";
-import axios from "axios";
-import { checkSafeBrowsing } from "./safeBrowsing";
 
 export default function Info() {
-  const [result, setResult] = useState(null);
-  const [url, setUrl] = useState("");
-  const [status, setStatus] = useState("");
+  const urlCtx = useContext(UrlContext);
+  const {
+    result,
+    setResult,
+    url,
+    setUrl,
+    status,
+    setStatus,
+    resultAvail,
+    setresultAvail,
+    handleSubmit,
+  } = urlCtx;
 
-  const handleSubmit = async () => {
+  const handleInputSubmit = () => {
     if (url.trim()) {
-      try {
-        // Fetch URL details from your backend
-        const response = await axios.get(
-          `http://10.0.2.2:3000/url?ogUrl=${url}`
-        );
-        const urlDetails = response.data.result;
-        setResult(urlDetails);
-
-        // Check the URL against Google's Safe Browsing API
-        const safeBrowsingResult = await checkSafeBrowsing(url);
-        if (safeBrowsingResult && safeBrowsingResult.matches) {
-          setStatus("Danger");
-          Alert.alert(
-            "Warning",
-            "The URL is considered unsafe by Google Safe Browsing."
-          );
-        } else {
-          setStatus("Safe");
-          Alert.alert(
-            "Safe",
-            "The URL is safe according to Google Safe Browsing."
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+      handleSubmit(url);
     } else {
       Alert.alert("Error", "Please enter a valid URL.");
     }
@@ -70,7 +52,7 @@ export default function Info() {
             marginBottom: 3,
           }}
         >
-          {result && result.ogSiteName && "Website Name: " + result.ogSiteName}
+          {"Website Information"}
         </Text>
         <Text
           style={{
@@ -79,7 +61,7 @@ export default function Info() {
             marginBottom: 15,
           }}
         >
-          {result && result.ogTitle && "Website Title: " + result.ogTitle}
+          {"Insights on the website"}
         </Text>
         <View
           style={{
@@ -105,7 +87,7 @@ export default function Info() {
             onChangeText={(text) => setUrl(text)}
             value={url}
           />
-          <TouchableOpacity onPress={handleSubmit}>
+          <TouchableOpacity onPress={handleInputSubmit}>
             <Image
               source={searchIcon}
               style={{
@@ -115,130 +97,212 @@ export default function Info() {
             />
           </TouchableOpacity>
         </View>
-        <View
-          style={{
-            backgroundColor: "#FFFFFF",
-            borderRadius: 10,
-            paddingVertical: 25,
-            paddingHorizontal: 16,
-            marginBottom: 33,
-            shadowColor: "#00000040",
-            shadowOpacity: 0.3,
-            shadowOffset: {
-              width: 0,
-              height: 4,
-            },
-            shadowRadius: 4,
-            elevation: 4,
-          }}
-        >
-          <Text
-            style={{
-              color: "#000000",
-              fontSize: 16,
-              fontWeight: 600,
-              marginBottom: 16,
-            }}
-          >
-            {result &&
-              result.ogDescription &&
-              "Website Description: " + result.ogDescription}
-          </Text>
-          {result && result.ogImage && (
-            <Image
-              source={{ uri: result.ogImage[0].url }}
+        {resultAvail && (
+          <>
+            <View
               style={{
-                width: "100%",
-                height: 80,
-                resizeMode: "contain",
-                marginVertical: 10,
+                backgroundColor: "#FFFFFF",
+                borderRadius: 10,
+                paddingVertical: 25,
+                paddingHorizontal: 16,
+                marginBottom: 33,
+                shadowColor: "#00000040",
+                shadowOpacity: 0.3,
+                shadowOffset: {
+                  width: 0,
+                  height: 4,
+                },
+                shadowRadius: 4,
+                elevation: 4,
               }}
-            />
-          )}
-          <Text
-            style={{
-              color: "#000000",
-              fontSize: 14,
-              marginBottom: 16,
-            }}
-          >
-            {"Status: " + status}
-          </Text>
-          <Text
-            style={{
-              color: "#000000",
-              fontSize: 14,
-            }}
-          >
-            {result && result.ogUrl && "URL: " + result.ogUrl}
-          </Text>
-        </View>
-        <View
-          style={{
-            backgroundColor: "#FFFFFF",
-            borderRadius: 10,
-            paddingVertical: 23,
-            paddingHorizontal: 15,
-            marginBottom: 27,
-            shadowColor: "#00000040",
-            shadowOpacity: 0.3,
-            shadowOffset: {
-              width: 0,
-              height: 4,
-            },
-            shadowRadius: 4,
-            elevation: 4,
-          }}
-        >
-          <Text
-            style={{
-              color: "#000000",
-              fontSize: 16,
-              fontWeight: 600,
-              marginBottom: 18,
-            }}
-          >
-            {"Detailed Information"}
-          </Text>
-          <Text
-            style={{
-              color: "#000000",
-              fontSize: 14,
-              marginBottom: 15,
-            }}
-          >
-            {"Website Trust Score: trust rating (35% safe)"}
-          </Text>
-          <Text
-            style={{
-              color: "#000000",
-              fontSize: 14,
-              marginBottom: 17,
-            }}
-          >
-            {"Risk Factors: No SSL Certificate"}
-          </Text>
-          <Text
-            style={{
-              color: "#000000",
-              fontSize: 14,
-              marginBottom: 15,
-            }}
-          >
-            {"SSL Certificate: SSL certificate status"}
-          </Text>
-          <Text
-            style={{
-              color: "#000000",
-              fontSize: 14,
-              width: 285,
-            }}
-          >
-            {
-              "Domain Registration: domain registration date, registrar, and expiration date"
-            }
-          </Text>
-        </View>
+            >
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 16,
+                  fontWeight: 600,
+                  marginBottom: 16,
+                }}
+              >
+                {"Result Summary"}
+              </Text>
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 14,
+                  marginBottom: 16,
+                }}
+              >
+                <>
+                  <Text style={{ fontWeight: "bold" }}>Status: </Text>
+                  <Text>{status}</Text>
+                </>
+              </Text>
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 14,
+                }}
+              >
+                {result && result.ogUrl && (
+                  <>
+                    <Text style={{ fontWeight: "bold" }}>URL: </Text>
+                    <Text>{result.ogUrl}</Text>
+                  </>
+                )}
+              </Text>
+            </View>
+            <View
+              style={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: 10,
+                paddingVertical: 25,
+                paddingHorizontal: 16,
+                marginBottom: 33,
+                shadowColor: "#00000040",
+                shadowOpacity: 0.3,
+                shadowOffset: {
+                  width: 0,
+                  height: 4,
+                },
+                shadowRadius: 4,
+                elevation: 4,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 16,
+                  fontWeight: 600,
+                  marginBottom: 18,
+                }}
+              >
+                {"Detailed Information"}
+              </Text>
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 16,
+                  marginBottom: 16,
+                  lineHeight: 20,
+                }}
+              >
+                {result && result.ogSiteName && (
+                  <>
+                    <Text style={{ fontWeight: "bold" }}>Website: </Text>
+                    <Text>{result.ogSiteName}</Text>
+                    {"\n"}
+                  </>
+                )}
+                {result && result.ogTitle && (
+                  <>
+                    <Text style={{ fontWeight: "bold" }}>Title: </Text>
+                    <Text>{result.ogTitle}</Text>
+                    {"\n\n"}
+                  </>
+                )}
+                {result && result.ogDescription && (
+                  <>
+                    <Text style={{ fontWeight: "bold" }}>Description: </Text>
+                    <Text>{result.ogDescription}</Text>
+                  </>
+                )}
+              </Text>
+
+              {result && result.ogImage && (
+                <>
+                  <Text
+                    style={{
+                      color: "#000000",
+                      fontSize: 16,
+                      fontWeight: 600,
+                      marginBottom: 16,
+                      lineHeight: 20,
+                    }}
+                  >
+                    Image:
+                  </Text>
+                  <Image
+                    source={{ uri: result.ogImage[0].url }}
+                    style={{
+                      width: "100%",
+                      height: 80,
+                      resizeMode: "contain",
+                      marginVertical: 10,
+                    }}
+                  />
+                </>
+              )}
+            </View>
+            <View
+              style={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: 10,
+                paddingVertical: 23,
+                paddingHorizontal: 15,
+                marginBottom: 27,
+                shadowColor: "#00000040",
+                shadowOpacity: 0.3,
+                shadowOffset: {
+                  width: 0,
+                  height: 4,
+                },
+                shadowRadius: 4,
+                elevation: 4,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 16,
+                  fontWeight: 600,
+                  marginBottom: 18,
+                }}
+              >
+                {"SSL Information"}
+              </Text>
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 14,
+                  marginBottom: 15,
+                }}
+              >
+                {"Website Trust Score: trust rating (85% safe)"}
+              </Text>
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 14,
+                  marginBottom: 17,
+                }}
+              >
+                {"Risk Factors: No SSL Certificate"}
+              </Text>
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 14,
+                  marginBottom: 15,
+                }}
+              >
+                {"SSL Certificate: SSL certificate status"}
+              </Text>
+              <Text
+                style={{
+                  color: "#000000",
+                  fontSize: 14,
+                  width: 285,
+                }}
+              >
+                {
+                  "Domain Registration: domain registration date, registrar, and expiration date"
+                }
+              </Text>
+            </View>
+          </>
+        )}
+
         <Text
           style={{
             color: "#000000",
@@ -275,7 +339,7 @@ export default function Info() {
               marginBottom: 21,
             }}
           >
-            {"Keep yourself safe"}
+            {"Keep yourself safe by:"}
           </Text>
           <Text
             style={{
@@ -284,7 +348,7 @@ export default function Info() {
               width: 287,
             }}
           >
-            {"Avoid entering personal information\nReport the website"}
+            {"Avoid entering personal information\n\nReport the website"}
           </Text>
         </View>
       </ScrollView>
