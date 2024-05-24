@@ -1,10 +1,23 @@
 import React from "react";
-import { SafeAreaView, View, ScrollView, Text, Image } from "react-native";
+import {
+  SafeAreaView,
+  View,
+  ScrollView,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import scanImage from "./assets/scan-asset.jpg";
 import infoIcon from "./assets/fluent--info-16-filled.png";
 import cameraIcon from "./assets/tabler--camera-filled.png";
 import shieldIcon from "./assets/mingcute--shield-fill.png";
 export default function Home() {
+  const navigation = useNavigation();
+  const handleSearch = () => {
+    navigation.navigate("Scan");
+  };
   return (
     <SafeAreaView
       style={{
@@ -90,24 +103,10 @@ export default function Home() {
                 "Use our scanner or \nURL checker functions \nto detect for scams "
               }
             </Text>
-            <View
-              style={{
-                width: 120,
-                height: 40,
-                alignItems: "center",
-                backgroundColor: "#2D81FF",
-                borderRadius: 8,
-                paddingVertical: 8,
-              }}
-            >
-              <Text
-                style={{
-                  color: "#FFFFFF",
-                  fontSize: 16,
-                }}
-              >
-                {"Get started"}
-              </Text>
+            <View style={styles.container}>
+              <TouchableOpacity style={styles.button} onPress={handleSearch}>
+                <Text style={styles.buttonText}>Get started</Text>
+              </TouchableOpacity>
             </View>
           </View>
           <Image
@@ -283,11 +282,11 @@ export default function Home() {
               color: "#000000",
               fontSize: 12,
               width: 283,
-              lineHeight: 18,
+              lineHeight: 16,
             }}
           >
             {
-              "Always check the URL before entering personal information\nLook for HTTPS in the web address"
+              "Always check the URL before entering personal information\n\nLook for HTTPS in the web address"
             }
           </Text>
         </View>
@@ -295,3 +294,23 @@ export default function Home() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: 120,
+    height: 40,
+    alignItems: "center",
+  },
+  button: {
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#2D81FF",
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+  },
+});
