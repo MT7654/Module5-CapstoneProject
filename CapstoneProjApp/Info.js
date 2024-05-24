@@ -30,6 +30,9 @@ export default function Info() {
     // For SSL cert 
   } = urlCtx;
 
+  // Initialize sslResult to null
+  const [sslResult, setSslResult] = useState(null);
+
   // For SSL cert 
   const handleSubmit = async (enteredUrl) => {
     try {
