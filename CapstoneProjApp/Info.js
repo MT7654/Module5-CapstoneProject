@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import searchIcon from "./assets/majesticons--search-line.png";
 
+
+
 export default function Info() {
   const urlCtx = useContext(UrlContext);
   const {
@@ -22,8 +24,23 @@ export default function Info() {
     setStatus,
     resultAvail,
     setresultAvail,
-    handleSubmit,
+    // handleSubmit,
+    // For SSL cert
+    sslInfo
+    // For SSL cert 
   } = urlCtx;
+
+  // For SSL cert 
+  const handleSubmit = async (enteredUrl) => {
+    try {
+      const sslResult = await checkSSL(enteredUrl); // Perform SSL check using the entered URL
+      setSslInfo(sslResult); // Set SSL information based on the result
+    } catch (error) {
+      console.error("Error checking SSL certificate:", error);
+      // Handle error if SSL check fails
+    }
+  };
+  // For SSL cert
 
   const handleInputSubmit = () => {
     if (url.trim()) {
@@ -44,6 +61,7 @@ export default function Info() {
           paddingHorizontal: 39,
         }}
       >
+        {/* Result summary and detailed information section */}
         <Text
           style={{
             color: "#000000",
@@ -76,6 +94,7 @@ export default function Info() {
             marginBottom: 16,
           }}
         >
+          {/* Enter URL portion */}
           <TextInput
             style={{
               color: "#828282",
@@ -97,6 +116,8 @@ export default function Info() {
             />
           </TouchableOpacity>
         </View>
+
+
         {resultAvail && (
           <>
             <View
@@ -313,6 +334,7 @@ export default function Info() {
         >
           {"Safety tips"}
         </Text>
+        
         <View
           style={{
             backgroundColor: "#FFFFFF",
@@ -351,6 +373,12 @@ export default function Info() {
             {"Avoid entering personal information\n\nReport the website"}
           </Text>
         </View>
+
+        <View style={{ backgroundColor: "#FFFFFF", borderRadius: 10, paddingVertical: 25, paddingHorizontal: 16, marginBottom: 33 }}>
+              <Text style={{ color: "#000000", fontSize: 16, fontWeight: 600, marginBottom: 16 }}>SSL Information</Text>
+              <Text style={{ color: "#000000", fontSize: 14, marginBottom: 15 }}>{"SSL Certificate: " + (sslResult ? "Verified" : "Not Verified")}</Text>        
+        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
