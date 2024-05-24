@@ -377,8 +377,8 @@ export default function Info() {
           </Text>
         </View>
 
-        <View style={{ backgroundColor: "#FFFFFF", borderRadius: 10, paddingVertical: 25, paddingHorizontal: 16, marginBottom: 33 }}>
-              <Text style={{ color: "#000000", fontSize: 16, fontWeight: 600, marginBottom: 16 }}>SSL Information</Text>
+        <View style={{ backgroundColor: "#FFFFFF", borderRadius: 10, paddingVertical: 25, paddingHorizontal: 16, marginBottom: 80 }}>
+              <Text style={{ color: "#000000", fontSize: 16, fontWeight: 600, marginBottom: 18 }}>SSL Information</Text>
               <Text style={{ color: "#000000", fontSize: 14, marginBottom: 15 }}>{"SSL Certificate: " + (sslResult !== null ? "Verified" : "Not Verified")}</Text>        
               {/* <Text style={{ color: "#000000", fontSize: 14, marginBottom: 15 }}>{"SSL Certificate: " + (sslResult ? "Verified" : "Not Verified")}</Text>         */}
         </View>
