@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import UrlContext from "./context/UrlContext";
 import {
   SafeAreaView,
@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import searchIcon from "./assets/majesticons--search-line.png";
+
+
 
 export default function Info() {
   const urlCtx = useContext(UrlContext);
@@ -25,6 +27,31 @@ export default function Info() {
     handleSubmit,
   } = urlCtx;
 
+
+  const [sslCertificationStatus, setSslCertificationStatus] = useState(null);
+
+   // Function to check SSL certification
+   const checkSSL = async (url) => {
+    try {
+      // Here you can implement your logic to check SSL certification for the provided URL
+      // For example, you can use a library like axios to make a request to the URL and check for the presence of SSL certification
+      // For the sake of demonstration, let's assume the SSL certification status is determined based on the presence of 'https' in the URL
+      const hasSSL = url.startsWith('https');
+      // Set the SSL certification status into the state variable
+      setSslCertificationStatus(hasSSL ? 'Yes' : 'No');
+    } catch (error) {
+      // Handle any errors that occur during the SSL check
+      console.error("Error checking SSL certificate:", error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    if (resultAvail) {
+      checkSSL(result.ogUrl);
+    }
+  }, [resultAvail, result.ogUrl]);
+
   const handleInputSubmit = () => {
     if (url.trim()) {
       handleSubmit(url);
@@ -32,6 +59,8 @@ export default function Info() {
       Alert.alert("Error", "Please enter a valid URL.");
     }
   };
+
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
@@ -97,6 +126,7 @@ export default function Info() {
             />
           </TouchableOpacity>
         </View>
+        
         {resultAvail && (
           <>
             <View
@@ -234,6 +264,10 @@ export default function Info() {
                 </>
               )}
             </View>
+            
+            
+            {/* SSL starts here  */}
+   
             <View
               style={{
                 backgroundColor: "#FFFFFF",
@@ -270,6 +304,8 @@ export default function Info() {
               >
                 {"Website Trust Score: trust rating (85% safe)"}
               </Text>
+              
+              
               <Text
                 style={{
                   color: "#000000",
@@ -277,8 +313,19 @@ export default function Info() {
                   marginBottom: 17,
                 }}
               >
-                {"Risk Factors: No SSL Certificate"}
+                {result && result.ogUrl && (
+                  <>
+                    <Text style={{ fontWeight: "bold" }}>Risk Factors: </Text>
+                    <Text>{sslCertificationStatus === null
+                    ? 'Awaiting SSL Certification check'
+                    : sslCertificationStatus === 'Yes'
+                    ? 'Low Risk'
+                    : 'High Risk'}</Text>
+                  </>
+                )}
               </Text>
+              
+              
               <Text
                 style={{
                   color: "#000000",
@@ -286,8 +333,16 @@ export default function Info() {
                   marginBottom: 15,
                 }}
               >
-                {"SSL Certificate: SSL certificate status"}
+                {result && result.ogUrl && (
+                  <>
+                    <Text style={{ fontWeight: "bold" }}>SSL Certificate: </Text>
+                    <Text>{sslCertificationStatus === null ? 'Awaiting' : sslCertificationStatus}</Text>
+                  </>
+                )}
               </Text>
+              
+
+
               <Text
                 style={{
                   color: "#000000",
@@ -295,14 +350,14 @@ export default function Info() {
                   width: 285,
                 }}
               >
-                {
-                  "Domain Registration: domain registration date, registrar, and expiration date"
-                }
+                {"Domain Registration: domain registration date, registrar, and expiration date"}
               </Text>
+            
             </View>
           </>
         )}
 
+        {/* Another box */}
         <Text
           style={{
             color: "#000000",

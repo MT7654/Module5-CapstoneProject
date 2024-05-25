@@ -16,7 +16,7 @@ export function UrlProvider({ children }) {
       try {
         // Fetch URL details from your backend
         const response = await axios.get(
-          `http://192.168.1.7:3000/url?ogUrl=${urlToSubmit}`
+          `http://192.168.0.189:3000/url?ogUrl=${urlToSubmit}`
         );
         const urlDetails = response.data.result;
         setResult(urlDetails);
